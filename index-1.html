@@ -1,0 +1,710 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>REMATTER — Circular Material Exchange</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#14171A;
+    --surface:#1B1F23;
+    --surface-2:#21262B;
+    --line:#2E3438;
+    --line-soft:#252A2E;
+    --text:#EDEAE2;
+    --text-muted:#9AA0A6;
+    --text-dim:#6B7176;
+    --copper:#C08552;
+    --copper-bright:#DDA06E;
+    --verdigris:#5C8C7C;
+    --verdigris-dim:#3E5C51;
+    --brass:#D4B483;
+    --danger:#B25A4A;
+    --radius:2px;
+  }
+  *{box-sizing:border-box; margin:0; padding:0;}
+  html{scroll-behavior:smooth;}
+  body{
+    background:var(--bg);
+    color:var(--text);
+    font-family:'Inter', sans-serif;
+    line-height:1.5;
+    -webkit-font-smoothing:antialiased;
+  }
+  .display{font-family:'Space Grotesk', sans-serif;}
+  .mono{font-family:'IBM Plex Mono', monospace;}
+  a{color:inherit;}
+  img,svg{display:block;}
+  ::selection{background:var(--copper); color:#14171A;}
+
+  :focus-visible{outline:2px solid var(--brass); outline-offset:3px;}
+
+  .wrap{max-width:1180px; margin:0 auto; padding:0 32px;}
+  @media (max-width:640px){ .wrap{padding:0 20px;} }
+
+  /* ---------- NAV ---------- */
+  header.site{
+    position:sticky; top:0; z-index:50;
+    background:rgba(20,23,26,0.88);
+    backdrop-filter:blur(10px);
+    border-bottom:1px solid var(--line-soft);
+  }
+  .nav{
+    display:flex; align-items:center; justify-content:space-between;
+    padding:18px 32px;
+    max-width:1180px; margin:0 auto;
+  }
+  .brand{
+    display:flex; align-items:center; gap:10px;
+    font-family:'Space Grotesk', sans-serif;
+    font-weight:700; font-size:1.15rem; letter-spacing:0.01em;
+  }
+  .brand-mark{
+    width:22px; height:22px; border:1.5px solid var(--copper);
+    position:relative; transform:rotate(45deg); flex:none;
+  }
+  .brand-mark::after{
+    content:''; position:absolute; inset:4px; border:1.5px solid var(--verdigris);
+  }
+  .navlinks{display:flex; gap:30px; font-size:0.88rem; color:var(--text-muted);}
+  .navlinks a{text-decoration:none; transition:color .15s;}
+  .navlinks a:hover{color:var(--text);}
+  .nav-cta{
+    font-family:'IBM Plex Mono', monospace; font-size:0.78rem;
+    color:var(--bg); background:var(--brass);
+    padding:9px 16px; border-radius:var(--radius);
+    text-decoration:none; letter-spacing:0.03em;
+    border:1px solid var(--brass);
+    transition:opacity .15s;
+  }
+  .nav-cta:hover{opacity:0.85;}
+  @media (max-width:800px){ .navlinks{display:none;} }
+
+  /* ---------- MANIFEST TICKER ---------- */
+  .ticker-bar{
+    border-bottom:1px solid var(--line-soft);
+    background:var(--surface);
+    overflow:hidden;
+    white-space:nowrap;
+  }
+  .ticker-track{
+    display:inline-flex;
+    animation:scroll-left 38s linear infinite;
+    padding:9px 0;
+  }
+  .ticker-track:hover{animation-play-state:paused;}
+  @keyframes scroll-left{
+    from{transform:translateX(0);}
+    to{transform:translateX(-50%);}
+  }
+  .ticker-item{
+    font-family:'IBM Plex Mono', monospace;
+    font-size:0.75rem;
+    color:var(--text-muted);
+    padding:0 26px;
+    border-right:1px solid var(--line-soft);
+    display:inline-flex; align-items:center; gap:8px;
+  }
+  .ticker-item .dot{width:5px; height:5px; border-radius:50%; background:var(--verdigris); flex:none;}
+  .ticker-item b{color:var(--brass); font-weight:500;}
+
+  @media (prefers-reduced-motion: reduce){
+    .ticker-track{animation:none;}
+  }
+
+  /* ---------- HERO ---------- */
+  .hero{
+    padding:88px 0 70px;
+    border-bottom:1px solid var(--line-soft);
+    position:relative;
+  }
+  .eyebrow{
+    font-family:'IBM Plex Mono', monospace;
+    font-size:0.76rem; letter-spacing:0.08em; text-transform:uppercase;
+    color:var(--copper-bright);
+    display:flex; align-items:center; gap:10px;
+    margin-bottom:22px;
+  }
+  .eyebrow::before{content:''; width:26px; height:1px; background:var(--copper-bright);}
+  .hero-grid{
+    display:grid; grid-template-columns:1.15fr 0.85fr; gap:56px; align-items:start;
+  }
+  @media (max-width:900px){ .hero-grid{grid-template-columns:1fr;} }
+
+  h1.headline{
+    font-family:'Space Grotesk', sans-serif;
+    font-weight:600;
+    font-size:clamp(2.1rem, 4.4vw, 3.4rem);
+    line-height:1.08;
+    letter-spacing:-0.01em;
+    max-width:14ch;
+  }
+  h1.headline em{
+    font-style:normal; color:var(--copper-bright);
+  }
+  .hero-sub{
+    margin-top:22px; color:var(--text-muted); font-size:1.02rem; max-width:46ch;
+  }
+  .hero-actions{display:flex; gap:14px; margin-top:34px; flex-wrap:wrap;}
+  .btn-primary, .btn-ghost{
+    font-family:'IBM Plex Mono', monospace; font-size:0.82rem;
+    padding:13px 22px; border-radius:var(--radius); text-decoration:none;
+    letter-spacing:0.02em; display:inline-flex; align-items:center; gap:8px;
+    border:1px solid transparent; cursor:pointer;
+  }
+  .btn-primary{background:var(--copper); color:#14171A; border-color:var(--copper);}
+  .btn-primary:hover{background:var(--copper-bright); border-color:var(--copper-bright);}
+  .btn-ghost{border-color:var(--line); color:var(--text);}
+  .btn-ghost:hover{border-color:var(--text-muted);}
+
+  .hero-stats{
+    display:grid; grid-template-columns:1fr 1fr; gap:1px;
+    background:var(--line-soft); border:1px solid var(--line-soft); margin-top:40px;
+  }
+  .hero-stat{background:var(--bg); padding:18px 20px;}
+  .hero-stat .num{font-family:'Space Grotesk',sans-serif; font-size:1.5rem; font-weight:600; color:var(--brass);}
+  .hero-stat .lbl{font-size:0.74rem; color:var(--text-dim); margin-top:4px; font-family:'IBM Plex Mono',monospace;}
+
+  /* ---------- PASSPORT CARD (signature element) ---------- */
+  .passport{
+    background:var(--surface);
+    border:1px solid var(--line);
+    position:relative;
+    padding:22px 22px 20px;
+    font-family:'IBM Plex Mono', monospace;
+  }
+  .passport::before{
+    content:''; position:absolute; top:-1px; left:24px; right:24px; height:1px;
+    background:repeating-linear-gradient(to right, var(--line-soft) 0 6px, transparent 6px 12px);
+  }
+  .passport-notch{
+    position:absolute; top:-8px; width:16px; height:16px; border-radius:50%;
+    background:var(--bg); border:1px solid var(--line);
+  }
+  .passport-notch.left{left:16px;} .passport-notch.right{right:16px;}
+  .p-head{display:flex; justify-content:space-between; align-items:flex-start;}
+  .p-id{font-size:0.7rem; color:var(--text-dim); letter-spacing:0.05em;}
+  .p-id b{color:var(--brass); display:block; font-size:0.95rem; margin-top:2px; font-weight:500;}
+  .p-stamp{
+    font-size:0.62rem; letter-spacing:0.1em; color:var(--verdigris);
+    border:1px solid var(--verdigris-dim); padding:4px 8px;
+    transform:rotate(4deg); border-radius:var(--radius);
+  }
+  .p-title{font-family:'Space Grotesk',sans-serif; font-size:1.3rem; font-weight:600; margin-top:14px; color:var(--text);}
+  .p-meta{display:flex; gap:18px; margin-top:10px; font-size:0.72rem; color:var(--text-muted); flex-wrap:wrap;}
+  .p-row{margin-top:16px;}
+  .p-row-label{font-size:0.66rem; color:var(--text-dim); letter-spacing:0.06em; text-transform:uppercase; margin-bottom:6px;}
+  .conf-bar{height:5px; background:var(--surface-2); border-radius:3px; overflow:hidden;}
+  .conf-fill{height:100%; background:linear-gradient(90deg, var(--verdigris-dim), var(--verdigris)); border-radius:3px;}
+  .conf-val{font-size:0.7rem; color:var(--verdigris); margin-top:6px;}
+  .p-hash{
+    margin-top:16px; padding-top:14px; border-top:1px dashed var(--line);
+    font-size:0.68rem; color:var(--text-dim); display:flex; justify-content:space-between;
+  }
+  .p-hash b{color:var(--text-muted); font-weight:500;}
+
+  /* ---------- SECTION SCAFFOLDING ---------- */
+  section{padding:90px 0; border-bottom:1px solid var(--line-soft);}
+  .sec-head{max-width:640px; margin-bottom:52px;}
+  .sec-tag{
+    font-family:'IBM Plex Mono',monospace; font-size:0.74rem; color:var(--copper-bright);
+    letter-spacing:0.06em; margin-bottom:14px; display:block;
+  }
+  h2.sec-title{
+    font-family:'Space Grotesk',sans-serif; font-weight:600; font-size:clamp(1.6rem,2.6vw,2.2rem);
+    letter-spacing:-0.01em;
+  }
+  .sec-desc{color:var(--text-muted); margin-top:14px; font-size:0.98rem;}
+
+  /* ---------- MARKETPLACE ---------- */
+  .filters{display:flex; gap:10px; margin-bottom:30px; flex-wrap:wrap;}
+  .chip{
+    font-family:'IBM Plex Mono',monospace; font-size:0.75rem;
+    padding:8px 14px; border:1px solid var(--line); border-radius:20px;
+    color:var(--text-muted); cursor:pointer; background:transparent;
+    transition:all .15s;
+  }
+  .chip:hover{border-color:var(--text-muted); color:var(--text);}
+  .chip.active{background:var(--copper); color:#14171A; border-color:var(--copper);}
+
+  .market-grid{
+    display:grid; grid-template-columns:repeat(3, 1fr); gap:20px;
+  }
+  @media (max-width:900px){ .market-grid{grid-template-columns:repeat(2,1fr);} }
+  @media (max-width:640px){ .market-grid{grid-template-columns:1fr;} }
+
+  .mcard{
+    background:var(--surface); border:1px solid var(--line);
+    padding:20px; transition:border-color .15s, transform .15s;
+  }
+  .mcard:hover{border-color:var(--copper); transform:translateY(-2px);}
+  .mcard-top{display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:12px;}
+  .mcard-cat{
+    font-family:'IBM Plex Mono',monospace; font-size:0.66rem; color:var(--verdigris);
+    border:1px solid var(--verdigris-dim); padding:3px 8px; border-radius:20px;
+  }
+  .mcard-id{font-family:'IBM Plex Mono',monospace; font-size:0.66rem; color:var(--text-dim);}
+  .mcard-title{font-family:'Space Grotesk',sans-serif; font-weight:600; font-size:1.08rem; margin-bottom:6px;}
+  .mcard-org{font-size:0.82rem; color:var(--text-muted); margin-bottom:14px;}
+  .mcard-stats{display:flex; justify-content:space-between; border-top:1px dashed var(--line); padding-top:12px;}
+  .mcard-stat{font-family:'IBM Plex Mono',monospace;}
+  .mcard-stat .v{font-size:0.92rem; color:var(--brass);}
+  .mcard-stat .k{font-size:0.62rem; color:var(--text-dim); margin-top:2px;}
+
+  /* ---------- CLASSIFIER ---------- */
+  .classify-panel{
+    display:grid; grid-template-columns:1fr 1fr; gap:40px; align-items:start;
+  }
+  @media (max-width:900px){ .classify-panel{grid-template-columns:1fr;} }
+  .scan-box{
+    border:1px dashed var(--line); background:var(--surface);
+    padding:34px; text-align:center; position:relative;
+  }
+  .scan-box .icon{
+    width:52px; height:52px; margin:0 auto 18px; border:1.5px solid var(--copper);
+    display:flex; align-items:center; justify-content:center; border-radius:50%;
+  }
+  .scan-box .icon svg{width:22px; height:22px;}
+  .scan-box p{color:var(--text-muted); font-size:0.9rem; margin-bottom:22px;}
+  #scanBtn{width:100%;}
+  .scan-progress{
+    height:3px; background:var(--surface-2); margin-top:20px; border-radius:2px; overflow:hidden;
+    display:none;
+  }
+  .scan-progress-fill{height:100%; width:0%; background:var(--copper); transition:width 1.1s ease;}
+  .result-card{min-height:340px; display:flex; flex-direction:column; justify-content:center;}
+  .result-empty{color:var(--text-dim); font-family:'IBM Plex Mono',monospace; font-size:0.82rem; text-align:center; padding:40px 20px;}
+
+  /* ---------- ANALYTICS ---------- */
+  .analytics-grid{display:grid; grid-template-columns:1fr 1.3fr; gap:40px;}
+  @media (max-width:900px){ .analytics-grid{grid-template-columns:1fr;} }
+  .impact-tiles{display:flex; flex-direction:column; gap:1px; background:var(--line-soft); border:1px solid var(--line-soft);}
+  .impact-tile{background:var(--bg); padding:22px;}
+  .impact-tile .num{font-family:'Space Grotesk',sans-serif; font-size:2rem; font-weight:600; color:var(--brass);}
+  .impact-tile .lbl{font-size:0.78rem; color:var(--text-muted); margin-top:4px;}
+  .impact-tile .sub{font-size:0.7rem; color:var(--text-dim); margin-top:8px; font-family:'IBM Plex Mono',monospace;}
+
+  .chart-box{background:var(--surface); border:1px solid var(--line); padding:26px;}
+  .chart-title{font-family:'IBM Plex Mono',monospace; font-size:0.74rem; color:var(--text-muted); margin-bottom:22px; display:flex; justify-content:space-between;}
+  .bars{display:flex; align-items:flex-end; gap:14px; height:190px;}
+  .bar-col{flex:1; display:flex; flex-direction:column; align-items:center; justify-content:flex-end; height:100%;}
+  .bar{
+    width:100%; max-width:36px; background:linear-gradient(180deg, var(--copper-bright), var(--copper));
+    border-radius:2px 2px 0 0; height:0; transition:height 1s cubic-bezier(.2,.8,.2,1);
+  }
+  .bar-val{font-size:0.68rem; color:var(--brass); font-family:'IBM Plex Mono',monospace; margin-bottom:6px; opacity:0; transition:opacity .6s;}
+  .bar-lbl{font-size:0.66rem; color:var(--text-dim); margin-top:10px; font-family:'IBM Plex Mono',monospace;}
+
+  /* ---------- LEDGER ---------- */
+  .ledger-controls{display:flex; justify-content:space-between; align-items:center; margin-bottom:28px; flex-wrap:wrap; gap:14px;}
+  .chain{display:flex; flex-direction:column; gap:0;}
+  .block{
+    display:grid; grid-template-columns:120px 1fr auto; gap:20px; align-items:center;
+    background:var(--surface); border:1px solid var(--line); padding:18px 20px;
+    position:relative;
+  }
+  .block + .block{margin-top:22px;}
+  .block + .block::before{
+    content:''; position:absolute; top:-22px; left:60px; width:1px; height:22px;
+    background:repeating-linear-gradient(to bottom, var(--verdigris-dim) 0 4px, transparent 4px 8px);
+  }
+  .block-idx{font-family:'IBM Plex Mono',monospace; color:var(--verdigris); font-size:0.85rem;}
+  .block-idx span{display:block; font-size:0.62rem; color:var(--text-dim); margin-top:3px;}
+  .block-mid .transfer{font-family:'Space Grotesk',sans-serif; font-size:0.98rem; font-weight:600;}
+  .block-mid .transfer .arrow{color:var(--copper-bright); margin:0 8px;}
+  .block-mid .meta{font-family:'IBM Plex Mono',monospace; font-size:0.68rem; color:var(--text-dim); margin-top:6px;}
+  .block-hash{font-family:'IBM Plex Mono',monospace; font-size:0.7rem; color:var(--text-muted); text-align:right;}
+  .block-hash .tag{
+    font-size:0.6rem; color:var(--verdigris); border:1px solid var(--verdigris-dim);
+    padding:2px 7px; border-radius:20px; display:inline-block; margin-bottom:6px;
+  }
+  @media (max-width:640px){
+    .block{grid-template-columns:1fr; gap:10px;}
+    .block-hash{text-align:left;}
+  }
+
+  /* ---------- CTA / FOOTER ---------- */
+  .cta-section{text-align:center; padding:100px 0;}
+  .cta-section h2{font-family:'Space Grotesk',sans-serif; font-size:clamp(1.8rem,3.4vw,2.6rem); font-weight:600; max-width:20ch; margin:0 auto 20px;}
+  .cta-section p{color:var(--text-muted); max-width:44ch; margin:0 auto 34px;}
+  .cta-row{display:flex; gap:14px; justify-content:center; flex-wrap:wrap;}
+
+  footer{padding:40px 0; }
+  .foot-row{display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:16px;}
+  .foot-links{display:flex; gap:24px; font-size:0.8rem; color:var(--text-dim);}
+  .foot-links a{text-decoration:none;}
+  .foot-links a:hover{color:var(--text-muted);}
+  .foot-note{font-family:'IBM Plex Mono',monospace; font-size:0.72rem; color:var(--text-dim);}
+
+  .reveal{opacity:0; transform:translateY(14px); transition:opacity .6s ease, transform .6s ease;}
+  .reveal.in{opacity:1; transform:none;}
+</style>
+</head>
+<body>
+
+<header class="site">
+  <nav class="nav">
+    <div class="brand"><span class="brand-mark"></span>REMATTER</div>
+    <div class="navlinks">
+      <a href="#marketplace">Marketplace</a>
+      <a href="#classifier">Classification</a>
+      <a href="#analytics">Carbon Analytics</a>
+      <a href="#ledger">Ownership Ledger</a>
+    </div>
+    <a href="#classifier" class="nav-cta">LIST A BATCH →</a>
+  </nav>
+  <div class="ticker-bar">
+    <div class="ticker-track" id="tickerTrack"></div>
+  </div>
+</header>
+
+<section class="hero">
+  <div class="wrap">
+    <div class="hero-grid">
+      <div>
+        <div class="eyebrow">SD-04 · Circular Economy Marketplace</div>
+        <h1 class="headline">Waste has an owner.<br>Give it a <em>next</em> one.</h1>
+        <p class="hero-sub">REMATTER lets industries list reusable material instead of discarding it. Every batch is classified by AI, priced by verified impact, and its custody is written to an immutable ledger the moment it changes hands.</p>
+        <div class="hero-actions">
+          <a href="#marketplace" class="btn-primary">Browse the exchange →</a>
+          <a href="#classifier" class="btn-ghost">Scan a material</a>
+        </div>
+        <div class="hero-stats">
+          <div class="hero-stat"><div class="num">4,812t</div><div class="lbl">MATERIAL DIVERTED FROM LANDFILL</div></div>
+          <div class="hero-stat"><div class="num">1,306</div><div class="lbl">VERIFIED OWNERSHIP TRANSFERS</div></div>
+          <div class="hero-stat"><div class="num">96.2%</div><div class="lbl">AVG. CLASSIFICATION CONFIDENCE</div></div>
+          <div class="hero-stat"><div class="num">2,940t</div><div class="lbl">CO₂e AVOIDED THIS QUARTER</div></div>
+        </div>
+      </div>
+
+      <div class="passport" id="heroPassport">
+        <span class="passport-notch left"></span><span class="passport-notch right"></span>
+        <div class="p-head">
+          <div class="p-id">BATCH<b>MAT-2201</b></div>
+          <div class="p-stamp">CLASSIFIED</div>
+        </div>
+        <div class="p-title">Steel Turnings, Mixed Grade</div>
+        <div class="p-meta">
+          <span>4.2t</span><span>Ferrous Metal</span><span>Precision Forge Works</span>
+        </div>
+        <div class="p-row">
+          <div class="p-row-label">Classification confidence</div>
+          <div class="conf-bar"><div class="conf-fill" style="width:96%"></div></div>
+          <div class="conf-val">96% — Ferrous Metal / Machining Swarf</div>
+        </div>
+        <div class="p-row">
+          <div class="p-row-label">Estimated carbon impact if reused</div>
+          <div class="conf-val" style="color:var(--brass)">−3.8t CO₂e vs. virgin steel</div>
+        </div>
+        <div class="p-hash">
+          <span>owner_hash</span><b>0x7f...c93a</b>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="marketplace">
+  <div class="wrap">
+    <div class="sec-head reveal">
+      <span class="sec-tag">01 — MARKETPLACE</span>
+      <h2 class="sec-title">Material listed by the organizations that made it</h2>
+      <p class="sec-desc">Each listing is a material passport: classification, quantity, origin and carbon value in one verified record. Filter by material stream to find what your process can absorb.</p>
+    </div>
+    <div class="filters" id="filters">
+      <button class="chip active" data-filter="all">All streams</button>
+      <button class="chip" data-filter="Ferrous Metal">Ferrous Metal</button>
+      <button class="chip" data-filter="Non-ferrous Metal">Non-ferrous Metal</button>
+      <button class="chip" data-filter="Plastic">Plastic</button>
+      <button class="chip" data-filter="Mineral Byproduct">Mineral Byproduct</button>
+      <button class="chip" data-filter="Fibre/Paper">Fibre / Paper</button>
+      <button class="chip" data-filter="Silicate">Silicate</button>
+    </div>
+    <div class="market-grid" id="marketGrid"></div>
+  </div>
+</section>
+
+<section id="classifier">
+  <div class="wrap">
+    <div class="sec-head reveal">
+      <span class="sec-tag">02 — AI CLASSIFICATION</span>
+      <h2 class="sec-title">Scan a batch, get a material passport</h2>
+      <p class="sec-desc">Upload photos or a spec sheet and the classifier returns a material category, confidence score and a starting carbon-impact estimate — ready to list or reject.</p>
+    </div>
+    <div class="classify-panel">
+      <div class="scan-box reveal">
+        <div class="icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="#C08552" stroke-width="1.6"><path d="M4 7V4h3M17 4h3v3M20 17v3h-3M7 20H4v-3"/><rect x="8" y="8" width="8" height="8" rx="1"/></svg>
+        </div>
+        <p>Simulate scanning the next batch in queue.<br>No real upload needed for this demo.</p>
+        <button class="btn-primary" id="scanBtn" style="cursor:pointer;">SCAN NEXT BATCH →</button>
+        <div class="scan-progress" id="scanProgress"><div class="scan-progress-fill" id="scanProgressFill"></div></div>
+      </div>
+      <div class="passport result-card reveal" id="resultPassport">
+        <div class="result-empty">Waiting for a scan.<br>Result will render here as a material passport.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="analytics">
+  <div class="wrap">
+    <div class="sec-head reveal">
+      <span class="sec-tag">03 — CARBON IMPACT ANALYTICS</span>
+      <h2 class="sec-title">Every trade converts into a measurable outcome</h2>
+      <p class="sec-desc">Carbon savings are estimated against the virgin-material baseline for each classified category, then aggregated per organization and per stream.</p>
+    </div>
+    <div class="analytics-grid">
+      <div class="impact-tiles reveal">
+        <div class="impact-tile">
+          <div class="num">2,940t</div>
+          <div class="lbl">CO₂e avoided, Q3 2026</div>
+          <div class="sub">≈ 640 passenger vehicles off the road for a year</div>
+        </div>
+        <div class="impact-tile">
+          <div class="num">4,812t</div>
+          <div class="lbl">Total material diverted from landfill</div>
+          <div class="sub">Across 6 material streams, 118 organizations</div>
+        </div>
+        <div class="impact-tile">
+          <div class="num">₹1.86Cr</div>
+          <div class="lbl">Virgin material cost displaced</div>
+          <div class="sub">Estimated buyer-side procurement saving</div>
+        </div>
+      </div>
+      <div class="chart-box reveal">
+        <div class="chart-title"><span>CO₂e AVOIDED BY STREAM — LAST 6 MONTHS</span><span>tonnes</span></div>
+        <div class="bars" id="bars"></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="ledger">
+  <div class="wrap">
+    <div class="sec-head reveal">
+      <span class="sec-tag">04 — OWNERSHIP TRACKING</span>
+      <h2 class="sec-title">Custody is a chain, not a filing cabinet</h2>
+      <p class="sec-desc">Every accepted trade appends a block: material, seller, buyer and a hash of the previous block. No listing can be reassigned without a new, visible record.</p>
+    </div>
+    <div class="ledger-controls reveal">
+      <div class="mono" style="font-size:0.78rem; color:var(--text-muted);">Chain height: <span id="chainHeight" style="color:var(--brass);">6</span> blocks</div>
+      <button class="btn-ghost" id="addBlockBtn" style="cursor:pointer;">+ RECORD NEW TRANSFER</button>
+    </div>
+    <div class="chain reveal" id="chain"></div>
+  </div>
+</section>
+
+<section class="cta-section">
+  <div class="wrap">
+    <h2 class="reveal">Your factory floor already made the raw material. Give it a second buyer.</h2>
+    <p class="reveal">List your first batch in under five minutes — classification and carbon estimate included, ownership tracked from the first handshake.</p>
+    <div class="cta-row reveal">
+      <a href="#classifier" class="btn-primary">List a batch →</a>
+      <a href="#marketplace" class="btn-ghost">Explore live listings</a>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap foot-row">
+    <div class="foot-note">REMATTER — SD-04 Circular Economy Marketplace · prototype build</div>
+    <div class="foot-links">
+      <a href="#marketplace">Marketplace</a>
+      <a href="#classifier">Classification</a>
+      <a href="#analytics">Analytics</a>
+      <a href="#ledger">Ledger</a>
+    </div>
+  </div>
+</footer>
+
+<script>
+// ---------- DATA ----------
+const materials = [
+  {id:'MAT-2201', title:'Steel Turnings, Mixed Grade', cat:'Ferrous Metal', conf:96, qty:'4.2t', org:'Precision Forge Works', co2:'3.8t', hash:'0x7f..c93a'},
+  {id:'MAT-2202', title:'HDPE Regrind, Post-Industrial', cat:'Plastic', conf:91, qty:'1.1t', org:'Coastal Packaging Co.', co2:'1.4t', hash:'0x2a..5e10'},
+  {id:'MAT-2203', title:'Fly Ash, Class F', cat:'Mineral Byproduct', conf:88, qty:'12.0t', org:'Meridian Power Station', co2:'6.9t', hash:'0x91..7bd2'},
+  {id:'MAT-2204', title:'Copper Wire Offcuts', cat:'Non-ferrous Metal', conf:98, qty:'0.6t', org:'Voltix Electricals', co2:'2.1t', hash:'0xd4..1f88'},
+  {id:'MAT-2205', title:'Cardboard, Baled OCC', cat:'Fibre/Paper', conf:94, qty:'2.9t', org:'Northside Logistics Hub', co2:'1.0t', hash:'0x66..a02c'},
+  {id:'MAT-2206', title:'Glass Cullet, Mixed Colour', cat:'Silicate', conf:90, qty:'5.4t', org:'Amber Bottling Ltd.', co2:'2.6t', hash:'0xb3..9e47'},
+  {id:'MAT-2207', title:'Aluminium Chips, Dry', cat:'Non-ferrous Metal', conf:95, qty:'0.9t', org:'Falcon Aerostructures', co2:'2.9t', hash:'0x5c..3a19'},
+  {id:'MAT-2208', title:'PET Flake, Food Grade', cat:'Plastic', conf:89, qty:'1.6t', org:'Coastal Packaging Co.', co2:'1.1t', hash:'0x0e..cd76'},
+  {id:'MAT-2209', title:'Foundry Sand, Reclaimed', cat:'Mineral Byproduct', conf:85, qty:'8.3t', org:'Ironclad Castings', co2:'3.2t', hash:'0xa7..6602'}
+];
+
+const tickerEvents = [
+  '4.2t Steel Turnings · Precision Forge → Bansal Alloys',
+  '1.1t HDPE Regrind · Coastal Packaging → Reflow Plastics',
+  '12.0t Fly Ash · Meridian Power → Horizon Cement',
+  '0.6t Copper Offcuts · Voltix Electricals → Rewire Metals',
+  '2.9t Cardboard OCC · Northside Logistics → PaperLoop',
+  '5.4t Glass Cullet · Amber Bottling → ClearCycle Glass'
+];
+
+// ---------- TICKER ----------
+const tickerTrack = document.getElementById('tickerTrack');
+function tickerHTML(){
+  return tickerEvents.map(t => {
+    const [amt, rest] = t.split(' · ');
+    return `<span class="ticker-item"><span class="dot"></span><b>${amt}</b> ${rest} · verified</span>`;
+  }).join('');
+}
+tickerTrack.innerHTML = tickerHTML() + tickerHTML();
+
+// ---------- MARKETPLACE ----------
+const marketGrid = document.getElementById('marketGrid');
+function renderMarket(filter){
+  const list = filter === 'all' ? materials : materials.filter(m => m.cat === filter);
+  marketGrid.innerHTML = list.map(m => `
+    <div class="mcard">
+      <div class="mcard-top">
+        <span class="mcard-cat">${m.cat}</span>
+        <span class="mcard-id mono">${m.id}</span>
+      </div>
+      <div class="mcard-title">${m.title}</div>
+      <div class="mcard-org">${m.org}</div>
+      <div class="mcard-stats">
+        <div class="mcard-stat"><div class="v">${m.qty}</div><div class="k">QUANTITY</div></div>
+        <div class="mcard-stat"><div class="v">${m.conf}%</div><div class="k">CONFIDENCE</div></div>
+        <div class="mcard-stat"><div class="v">−${m.co2}</div><div class="k">CO₂e SAVED</div></div>
+      </div>
+    </div>
+  `).join('');
+}
+renderMarket('all');
+
+document.getElementById('filters').addEventListener('click', e => {
+  if(e.target.tagName !== 'BUTTON') return;
+  document.querySelectorAll('#filters .chip').forEach(c => c.classList.remove('active'));
+  e.target.classList.add('active');
+  renderMarket(e.target.dataset.filter);
+});
+
+// ---------- CLASSIFIER DEMO ----------
+let scanIndex = 0;
+const scanBtn = document.getElementById('scanBtn');
+const scanProgress = document.getElementById('scanProgress');
+const scanProgressFill = document.getElementById('scanProgressFill');
+const resultPassport = document.getElementById('resultPassport');
+
+scanBtn.addEventListener('click', () => {
+  const m = materials[scanIndex % materials.length];
+  scanIndex++;
+  scanBtn.disabled = true;
+  scanProgress.style.display = 'block';
+  scanProgressFill.style.width = '0%';
+  resultPassport.innerHTML = '<div class="result-empty">Analysing spectral + visual features…</div>';
+  requestAnimationFrame(() => { scanProgressFill.style.width = '100%'; });
+
+  setTimeout(() => {
+    resultPassport.classList.remove('result-card');
+    resultPassport.innerHTML = `
+      <span class="passport-notch left"></span><span class="passport-notch right"></span>
+      <div class="p-head">
+        <div class="p-id">BATCH<b>${m.id}</b></div>
+        <div class="p-stamp">CLASSIFIED</div>
+      </div>
+      <div class="p-title">${m.title}</div>
+      <div class="p-meta"><span>${m.qty}</span><span>${m.cat}</span><span>${m.org}</span></div>
+      <div class="p-row">
+        <div class="p-row-label">Classification confidence</div>
+        <div class="conf-bar"><div class="conf-fill" style="width:${m.conf}%"></div></div>
+        <div class="conf-val">${m.conf}% — ${m.cat}</div>
+      </div>
+      <div class="p-row">
+        <div class="p-row-label">Estimated carbon impact if reused</div>
+        <div class="conf-val" style="color:var(--brass)">−${m.co2} CO₂e vs. virgin material</div>
+      </div>
+      <div class="p-hash"><span>owner_hash</span><b>${m.hash}</b></div>
+    `;
+    scanProgress.style.display = 'none';
+    scanBtn.disabled = false;
+  }, 1150);
+});
+
+// ---------- CARBON BAR CHART ----------
+const chartData = [
+  {lbl:'Ferrous', val:412}, {lbl:'Non-ferr.', val:268}, {lbl:'Plastic', val:189},
+  {lbl:'Mineral', val:530}, {lbl:'Fibre', val:96}, {lbl:'Silicate', val:174}
+];
+const maxVal = Math.max(...chartData.map(d => d.val));
+const barsEl = document.getElementById('bars');
+barsEl.innerHTML = chartData.map(d => `
+  <div class="bar-col">
+    <div class="bar-val" data-val="${d.val}">${d.val}t</div>
+    <div class="bar" data-h="${(d.val/maxVal*100).toFixed(0)}"></div>
+    <div class="bar-lbl">${d.lbl}</div>
+  </div>
+`).join('');
+
+// ---------- LEDGER ----------
+let chainData = [
+  {idx:0, from:'Precision Forge Works', to:'Bansal Alloys', material:'Steel Turnings · 4.2t', hash:'8f2c...c93a', prev:'GENESIS'},
+  {idx:1, from:'Coastal Packaging Co.', to:'Reflow Plastics', material:'HDPE Regrind · 1.1t', hash:'2a19...5e10', prev:'8f2c...c93a'},
+  {idx:2, from:'Meridian Power Station', to:'Horizon Cement', material:'Fly Ash · 12.0t', hash:'91bd...7bd2', prev:'2a19...5e10'},
+  {idx:3, from:'Voltix Electricals', to:'Rewire Metals', material:'Copper Offcuts · 0.6t', hash:'d441...1f88', prev:'91bd...7bd2'},
+  {idx:4, from:'Northside Logistics', to:'PaperLoop', material:'Cardboard OCC · 2.9t', hash:'6602...a02c', prev:'d441...1f88'},
+  {idx:5, from:'Amber Bottling Ltd.', to:'ClearCycle Glass', material:'Glass Cullet · 5.4t', hash:'b347...9e47', prev:'6602...a02c'}
+];
+const chainEl = document.getElementById('chain');
+function renderChain(){
+  chainEl.innerHTML = chainData.map(b => `
+    <div class="block">
+      <div class="block-idx">#${String(b.idx).padStart(4,'0')}<span>BLOCK</span></div>
+      <div class="block-mid">
+        <div class="transfer">${b.from}<span class="arrow">→</span>${b.to}</div>
+        <div class="meta">${b.material}</div>
+      </div>
+      <div class="block-hash">
+        <span class="tag">VERIFIED</span><br>
+        <span>hash&nbsp;<b>${b.hash}</b></span><br>
+        <span>prev&nbsp;<b>${b.prev}</b></span>
+      </div>
+    </div>
+  `).join('');
+  document.getElementById('chainHeight').textContent = chainData.length;
+}
+renderChain();
+
+function randHash(){
+  const chars = '0123456789abcdef';
+  let s = '';
+  for(let i=0;i<8;i++) s += chars[Math.floor(Math.random()*16)];
+  return s.slice(0,4) + '...' + s.slice(4);
+}
+const newTransfers = [
+  ['Ironclad Castings','Bansal Alloys','Foundry Sand · 8.3t'],
+  ['Falcon Aerostructures','Rewire Metals','Aluminium Chips · 0.9t'],
+  ['Coastal Packaging Co.','Reflow Plastics','PET Flake · 1.6t']
+];
+let newIdx = 0;
+document.getElementById('addBlockBtn').addEventListener('click', () => {
+  const last = chainData[chainData.length - 1];
+  const t = newTransfers[newIdx % newTransfers.length]; newIdx++;
+  chainData.push({idx:last.idx+1, from:t[0], to:t[1], material:t[2], hash:randHash(), prev:last.hash});
+  renderChain();
+  chainEl.lastElementChild.scrollIntoView({behavior:'smooth', block:'center'});
+});
+
+// ---------- REVEAL ON SCROLL ----------
+const revealEls = document.querySelectorAll('.reveal');
+const io = new IntersectionObserver((entries) => {
+  entries.forEach(e => { if(e.isIntersecting) e.target.classList.add('in'); });
+}, {threshold:0.12});
+revealEls.forEach(el => io.observe(el));
+
+const barIo = new IntersectionObserver((entries) => {
+  entries.forEach(e => {
+    if(e.isIntersecting){
+      document.querySelectorAll('.bar').forEach(b => b.style.height = b.dataset.h + '%');
+      document.querySelectorAll('.bar-val').forEach(v => v.style.opacity = '1');
+      barIo.disconnect();
+    }
+  });
+}, {threshold:0.3});
+barIo.observe(document.getElementById('bars'));
+</script>
+</body>
+</html>
