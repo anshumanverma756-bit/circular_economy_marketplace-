@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>REMATTER — Circular Material Exchange</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+</head>
+<body>
+
+<header class="site">
+  <nav class="nav">
+    <div class="brand"><span class="brand-mark"></span>REMATTER</div>
+    <div class="navlinks">
+      <a href="#marketplace">Marketplace</a>
+      <a href="#classifier">Classification</a>
+      <a href="#analytics">Carbon Analytics</a>
+      <a href="#ledger">Ownership Ledger</a>
+    </div>
+    <a href="#classifier" class="nav-cta">LIST A BATCH →</a>
+  </nav>
+  <div class="ticker-bar">
+    <div class="ticker-track" id="tickerTrack"></div>
+  </div>
+</header>
+
+<section class="hero">
+  <div class="wrap">
+    <div class="hero-grid">
+      <div>
+        <div class="eyebrow">SD-04 · Circular Economy Marketplace</div>
+        <h1 class="headline">Waste has an owner.<br>Give it a <em>next</em> one.</h1>
+        <p class="hero-sub">REMATTER lets industries list reusable material instead of discarding it. Every batch is classified by AI, priced by verified impact, and its custody is written to an immutable ledger the moment it changes hands.</p>
+        <div class="hero-actions">
+          <a href="#marketplace" class="btn-primary">Browse the exchange →</a>
+          <a href="#classifier" class="btn-ghost">Scan a material</a>
+        </div>
+        <div class="hero-stats">
+          <div class="hero-stat"><div class="num">4,812t</div><div class="lbl">MATERIAL DIVERTED FROM LANDFILL</div></div>
+          <div class="hero-stat"><div class="num">1,306</div><div class="lbl">VERIFIED OWNERSHIP TRANSFERS</div></div>
+          <div class="hero-stat"><div class="num">96.2%</div><div class="lbl">AVG. CLASSIFICATION CONFIDENCE</div></div>
+          <div class="hero-stat"><div class="num">2,940t</div><div class="lbl">CO₂e AVOIDED THIS QUARTER</div></div>
+        </div>
+      </div>
+
+      <div class="passport" id="heroPassport">
+        <span class="passport-notch left"></span><span class="passport-notch right"></span>
+        <div class="p-head">
+          <div class="p-id">BATCH<b>MAT-2201</b></div>
+          <div class="p-stamp">CLASSIFIED</div>
+        </div>
+        <div class="p-title">Steel Turnings, Mixed Grade</div>
+        <div class="p-meta">
+          <span>4.2t</span><span>Ferrous Metal</span><span>Precision Forge Works</span>
+        </div>
+        <div class="p-row">
+          <div class="p-row-label">Classification confidence</div>
+          <div class="conf-bar"><div class="conf-fill" style="width:96%"></div></div>
+          <div class="conf-val">96% — Ferrous Metal / Machining Swarf</div>
+        </div>
+        <div class="p-row">
+          <div class="p-row-label">Estimated carbon impact if reused</div>
+          <div class="conf-val" style="color:var(--brass)">−3.8t CO₂e vs. virgin steel</div>
+        </div>
+        <div class="p-hash">
+          <span>owner_hash</span><b>0x7f...c93a</b>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="marketplace">
+  <div class="wrap">
+    <div class="sec-head reveal">
+      <span class="sec-tag">01 — MARKETPLACE</span>
+      <h2 class="sec-title">Material listed by the organizations that made it</h2>
+      <p class="sec-desc">Each listing is a material passport: classification, quantity, origin and carbon value in one verified record. Filter by material stream to find what your process can absorb.</p>
+    </div>
+    <div class="filters" id="filters">
+      <button class="chip active" data-filter="all">All streams</button>
+      <button class="chip" data-filter="Ferrous Metal">Ferrous Metal</button>
+      <button class="chip" data-filter="Non-ferrous Metal">Non-ferrous Metal</button>
+      <button class="chip" data-filter="Plastic">Plastic</button>
+      <button class="chip" data-filter="Mineral Byproduct">Mineral Byproduct</button>
+      <button class="chip" data-filter="Fibre/Paper">Fibre / Paper</button>
+      <button class="chip" data-filter="Silicate">Silicate</button>
+    </div>
+    <div class="market-grid" id="marketGrid"></div>
+  </div>
+</section>
+
+<section id="classifier">
+  <div class="wrap">
+    <div class="sec-head reveal">
+      <span class="sec-tag">02 — AI CLASSIFICATION</span>
+      <h2 class="sec-title">Scan a batch, get a material passport</h2>
+      <p class="sec-desc">Upload photos or a spec sheet and the classifier returns a material category, confidence score and a starting carbon-impact estimate — ready to list or reject.</p>
+    </div>
+    <div class="classify-panel">
+      <div class="scan-box reveal">
+        <div class="icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="#C08552" stroke-width="1.6"><path d="M4 7V4h3M17 4h3v3M20 17v3h-3M7 20H4v-3"/><rect x="8" y="8" width="8" height="8" rx="1"/></svg>
+        </div>
+        <p>Simulate scanning the next batch in queue.<br>No real upload needed for this demo.</p>
+        <button class="btn-primary" id="scanBtn" style="cursor:pointer;">SCAN NEXT BATCH →</button>
+        <div class="scan-progress" id="scanProgress"><div class="scan-progress-fill" id="scanProgressFill"></div></div>
+      </div>
+      <div class="passport result-card reveal" id="resultPassport">
+        <div class="result-empty">Waiting for a scan.<br>Result will render here as a material passport.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="analytics">
+  <div class="wrap">
+    <div class="sec-head reveal">
+      <span class="sec-tag">03 — CARBON IMPACT ANALYTICS</span>
+      <h2 class="sec-title">Every trade converts into a measurable outcome</h2>
+      <p class="sec-desc">Carbon savings are estimated against the virgin-material baseline for each classified category, then aggregated per organization and per stream.</p>
+    </div>
+    <div class="analytics-grid">
+      <div class="impact-tiles reveal">
+        <div class="impact-tile">
+          <div class="num">2,940t</div>
+          <div class="lbl">CO₂e avoided, Q3 2026</div>
+          <div class="sub">≈ 640 passenger vehicles off the road for a year</div>
+        </div>
+        <div class="impact-tile">
+          <div class="num">4,812t</div>
+          <div class="lbl">Total material diverted from landfill</div>
+          <div class="sub">Across 6 material streams, 118 organizations</div>
+        </div>
+        <div class="impact-tile">
+          <div class="num">₹1.86Cr</div>
+          <div class="lbl">Virgin material cost displaced</div>
+          <div class="sub">Estimated buyer-side procurement saving</div>
+        </div>
+      </div>
+      <div class="chart-box reveal">
+        <div class="chart-title"><span>CO₂e AVOIDED BY STREAM — LAST 6 MONTHS</span><span>tonnes</span></div>
+        <div class="bars" id="bars"></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="ledger">
+  <div class="wrap">
+    <div class="sec-head reveal">
+      <span class="sec-tag">04 — OWNERSHIP TRACKING</span>
+      <h2 class="sec-title">Custody is a chain, not a filing cabinet</h2>
+      <p class="sec-desc">Every accepted trade appends a block: material, seller, buyer and a hash of the previous block. No listing can be reassigned without a new, visible record.</p>
+    </div>
+    <div class="ledger-controls reveal">
+      <div class="mono" style="font-size:0.78rem; color:var(--text-muted);">Chain height: <span id="chainHeight" style="color:var(--brass);">6</span> blocks</div>
+      <button class="btn-ghost" id="addBlockBtn" style="cursor:pointer;">+ RECORD NEW TRANSFER</button>
+    </div>
+    <div class="chain reveal" id="chain"></div>
+  </div>
+</section>
+
+<section class="cta-section">
+  <div class="wrap">
+    <h2 class="reveal">Your factory floor already made the raw material. Give it a second buyer.</h2>
+    <p class="reveal">List your first batch in under five minutes — classification and carbon estimate included, ownership tracked from the first handshake.</p>
+    <div class="cta-row reveal">
+      <a href="#classifier" class="btn-primary">List a batch →</a>
+      <a href="#marketplace" class="btn-ghost">Explore live listings</a>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap foot-row">
+    <div class="foot-note">REMATTER — SD-04 Circular Economy Marketplace · prototype build</div>
+    <div class="foot-links">
+      <a href="#marketplace">Marketplace</a>
+      <a href="#classifier">Classification</a>
+      <a href="#analytics">Analytics</a>
+      <a href="#ledger">Ledger</a>
+    </div>
+  </div>
+</footer>
+
+<script src="script.js"></script>
+</body>
+</html>
